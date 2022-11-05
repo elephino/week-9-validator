@@ -31,33 +31,22 @@ function showSuccess(input) {
   formControl.className = 'form-control success';
 }
 
-function resetFormBorders(inputArr) {
-  inputArr.forEach(function (input) {
-    const formControl = input.parentElement;
-    formControl.className = 'form-control';
-    const small = formControl.querySelector('small');
-    small.innerText = "";
-  });
-}
-
-
 // Check email is valid
 function checkEmail(input) {
   const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!input.value.trim().match(pattern)) {
-    return [false, "Email is invalid."];
+    return {"result": false, "result_msg": "Email is invalid."};
   } else {
-    return [true, input];
+    return {"result": true, "result_msg": input};
   }
 }
 
 // Check input length
 function checkLength(input, min, max) {
   if (input.value.length < min || input.value.length > max) {
-      return [false,
-      `${getFieldName(input)} must be between ${min} and ${max} characters.`];
+      return {"result": false, "result_msg": `${getFieldName(input)} must be between ${min} and ${max} characters.`};
   } else {
-      return [true, input];
+      return {"result": true, "result_msg": ""};
   }
 }
 
@@ -73,15 +62,18 @@ function checkPasswords(input1, input2) {
     validated = false;
   }
 
-  if(!check_password_1[0] || !check_password_2[0]) {
-    validation_msg += check_password_1[1];
-    validated = false;
+  if((!check_password_1["result"] && !check_password_2["result"]) || !check_password_1["result"]) {
+    validation_msg += check_password_1["result_msg"];
+    validated = false
+  }
+  else if (!check_password_2["result"]) {
+    validation_msg += check_password_2["result_msg"]
+    validated = false
   }
 
-  return [validated, validation_msg.trim()]
+  return {"result": validated, "result_msg": validation_msg.trim()}
 
 }
-
 
 // Get fieldname
 function getFieldName(input) {
@@ -92,36 +84,46 @@ function getFieldName(input) {
 form.addEventListener('submit', function(event) {
   event.preventDefault();
 
-  console.log("Statement 1.")
   if(checkRequired(form_fields)){
-    console.log("Inner statement 2.")
     passwords_check = checkPasswords(password, password_confirmation)
-    if(!passwords_check[0]){
-      showError(password, passwords_check[1])
-      showError(password_confirmation, passwords_check[1])
+    if(!passwords_check["result"]){
+      showError(password, passwords_check["result_msg"])
+      showError(password_confirmation, passwords_check["result_msg"])
     }
     else {
       showSuccess(password)
       showSuccess(password_confirmation)
     }
 
+    // console.log(checkPasswords(password, password_confirmation))
+
     username_check = checkLength(username, 3, 15)
-    if(!username_check[0]) {
-      showError(username, username_check[1])
+    if(!username_check["result"]) {
+      showError(username, username_check["result_msg"])
     }
     else {
       showSuccess(username)
     }
 
+    // console.log(checkLength(username, 3, 15));
+
     email_check = checkEmail(email)
-    if(!email_check[0]) {
-      showError(email, email_check[1])
+    if(!email_check["result"]) {
+      showError(email, email_check["result_msg"])
     }
     else {
       showSuccess(email)
     }
+
     // console.log(checkEmail(email));
 
-  }
+    /*
+    Uncomment and remove this line to reset fields after form submission
+
+    form_fields.forEach(function (input) {
+    field.reset();
+
+*/
+}
 
 });
