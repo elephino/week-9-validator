@@ -84,46 +84,52 @@ function getFieldName(input) {
 form.addEventListener('submit', function(event) {
   event.preventDefault();
 
+  reset_form = true;
+
   if(checkRequired(form_fields)){
-    passwords_check = checkPasswords(password, password_confirmation)
+    passwords_check = checkPasswords(password, password_confirmation);
     if(!passwords_check["result"]){
-      showError(password, passwords_check["result_msg"])
-      showError(password_confirmation, passwords_check["result_msg"])
+      showError(password, passwords_check["result_msg"]);
+      showError(password_confirmation, passwords_check["result_msg"]);
+      reset_form = false;
     }
     else {
-      showSuccess(password)
-      showSuccess(password_confirmation)
+      showSuccess(password);
+      showSuccess(password_confirmation);
     }
 
     // console.log(checkPasswords(password, password_confirmation))
 
-    username_check = checkLength(username, 3, 15)
+    username_check = checkLength(username, 3, 15);
     if(!username_check["result"]) {
-      showError(username, username_check["result_msg"])
+      showError(username, username_check["result_msg"]);
+      reset_form = false;
     }
     else {
-      showSuccess(username)
+      showSuccess(username);
     }
 
     // console.log(checkLength(username, 3, 15));
 
-    email_check = checkEmail(email)
+    email_check = checkEmail(email);
     if(!email_check["result"]) {
-      showError(email, email_check["result_msg"])
+      showError(email, email_check["result_msg"]);
+      reset_form = false;
     }
     else {
-      showSuccess(email)
+      showSuccess(email);
     }
 
     // console.log(checkEmail(email));
+  }
+  else {
+    reset_form = false;
+  }
 
-    /*
-    Uncomment and remove this line to reset fields after form submission
-
-    form_fields.forEach(function (input) {
-    field.reset();
-
-*/
-}
+  if(reset_form) {
+      form_fields.forEach(function (input) {
+      field.reset();
+    }
+  }
 
 });
